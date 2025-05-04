@@ -7,6 +7,7 @@ from pages.teacher_management import TeacherManagementPage
 from pages.lesson_management import LessonManagementPage
 from pages.score_registration import ScoreRegistrationPage
 from pages.report_generation import ReportGenerationPage
+from pages.attendance_management import AttendanceManagementPage
 
 # تنظیمات اولیه
 ctk.set_appearance_mode("Light")
@@ -15,6 +16,7 @@ ctk.set_default_color_theme("green")
 # ساخت پنجره اصلی
 app = ctk.CTk()
 app.geometry("1000x600")
+app.minsize(1000,600)
 app.title("نرم افزار مدیریت هنرستان")
 
 # ساخت سایدبار و فریم اصلی محتوا
@@ -81,6 +83,12 @@ def open_report_generation():
     page = ReportGenerationPage(content_frame)
     page.pack(fill="both", expand=True)
 
+def Attendance_Management():
+    clear_content()
+    page = AttendanceManagementPage(content_frame)
+    page.pack(fill="both", expand=True)
+
+
 # تابع خروج
 def exit_app():
     app.destroy()
@@ -104,6 +112,7 @@ buttons = [
     ("مدیریت دروس", open_lesson_management),
     ("مدیریت نمرات", open_score_registration),
     ("گزارشات", open_report_generation),
+    ("حضور غیاب", Attendance_Management)
 ]
 
 for text, command in buttons:
