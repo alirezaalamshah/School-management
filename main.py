@@ -120,9 +120,10 @@ for text, command in buttons:
         master=sidebar_frame, 
         text=text, 
         width=180, 
-        height=40, 
+        height=40,
         corner_radius=8, 
-        command=command
+        command=command,
+        font=("B Nazanin", 20)
     )
     btn.pack(pady=5, padx=10)
 
@@ -133,9 +134,10 @@ exit_btn = ctk.CTkButton(
     width=180,
     height=40,
     corner_radius=8,
-    fg_color="red",
-    hover_color="#cc0000",
-    command=exit_app
+    fg_color="#E74C3C",
+    hover_color="#C0392B",
+    command=exit_app,
+    font=("B Nazanin", 20)
 )
 exit_btn.pack(pady=(20, 5), padx=10)
 
