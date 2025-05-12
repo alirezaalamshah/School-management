@@ -1,65 +1,278 @@
+# pages/major_management.py
 import customtkinter as ctk
-import tkinter.messagebox as mbox
+from tkinter import messagebox
 
 class MajorManagementPage(ctk.CTkFrame):
-    def __init__(self, master):
-        super().__init__(master)
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.pack(fill="both", expand=True)
         
-        # تیتر
-        self.title_label = ctk.CTkLabel(self, text="مدیریت رشته‌ها", font=("IRANSans", 24, "bold"))
-        self.title_label.pack(pady=(20,10))
+        # عنوان صفحه
+        title_label = ctk.CTkLabel(
+            self,
+            text="مدیریت پایه‌ها، رشته‌ها و دروس",
+            font=("B Titr", 20, "bold"),
+        )
+        title_label.pack(pady=15, padx=20, anchor="e")
 
-        # فیلد ورود نام رشته
-        self.major_entry = ctk.CTkEntry(self, placeholder_text="نام رشته جدید را وارد کنید")
-        self.major_entry.pack(pady=10)
+        # تب‌های اصلی
+        self.tabview = ctk.CTkTabview(self)
+        self.tabview.pack(fill="both", expand=True, padx=20, pady=10)
+        
+        # ایجاد تب‌ها
+        self.tabview.add("دروس")
+        self.tabview.add("کلاس‌ها")
+        self.tabview.add("پایه‌ها")
+        self.tabview.add("رشته‌ها")
+        self.tabview.set("رشته‌ها")
+        
+        # طراحی هر تب
+        self.create_majors_tab()
+        self.create_grades_tab()
+        self.create_classes_tab()
+        self.create_courses_tab()
 
+    def create_input_section(self, parent, title):
+        # قالب مشترک برای بخش‌های ورودی
+        frame = ctk.CTkFrame(parent,)
+        frame.pack(fill="x", pady=10, padx=10)
+        
+        ctk.CTkLabel(
+            frame,
+            text=title,
+            font=("B Nazanin", 14, "bold"),
+        ).pack(side="right", padx=10, pady=5)
+        
+        return frame
+
+    def create_majors_tab(self):
+        tab = self.tabview.tab("رشته‌ها")
+        
+        # بخش افزودن رشته جدید
+        add_frame = self.create_input_section(tab, "افزودن رشته جدید:")
+        
+        self.major_entry = ctk.CTkEntry(
+            add_frame,
+            placeholder_text="نام رشته (مثال: کامپیوتر)",
+            font=("B Nazanin", 13),
+            width=300,
+            height=35,
+            justify = "right"
+        )
+        self.major_entry.pack(side="right", padx=10, pady=5)
+        
+        ctk.CTkButton(
+            add_frame,
+            text="➕ افزودن",
+            font=("B Nazanin", 13),
+            width=100,
+            height=35,
+            command=self.add_major
+        ).pack(side="right", padx=10)
+        
         # لیست رشته‌ها
-        self.major_listbox = ctk.CTkTextbox(self, width=400, height=300)
-        self.major_listbox.pack(pady=20)
+        self.majors_list = ctk.CTkScrollableFrame(tab, )
+        self.majors_list.pack(fill="both", expand=True, padx=10, pady=10)
 
-        # فریم دکمه‌ها
-        self.button_frame = ctk.CTkFrame(self)
-        self.button_frame.pack(pady=10)
+    def create_grades_tab(self):
+        tab = self.tabview.tab("پایه‌ها")
+        
+        # بخش افزودن پایه جدید
+        add_frame = self.create_input_section(tab, "افزودن پایه جدید:")
+        
+        self.grade_entry = ctk.CTkEntry(
+            add_frame,
+            placeholder_text="نام پایه (مثال: دهم، یازدهم)",
+            font=("B Nazanin", 13),
+            width=300,
+            height=35,
+            justify = "right"
+        )
+        self.grade_entry.pack(side="right", padx=10, pady=5)
+        
+        ctk.CTkButton(
+            add_frame,
+            text="➕ افزودن",
+            # fg_color="#27AE60",
+            font=("B Nazanin", 13),
+            width=100,
+            height=35,
+            command=self.add_grade
+        ).pack(side="right", padx=10)
+        
+        # لیست پایه‌ها
+        self.grades_list = ctk.CTkScrollableFrame(tab, )
+        self.grades_list.pack(fill="both", expand=True, padx=10, pady=10)
 
-        self.add_btn = ctk.CTkButton(self.button_frame, text="افزودن رشته", command=self.add_major)
-        self.add_btn.grid(row=0, column=0, padx=5)
+    def create_classes_tab(self):
+        tab = self.tabview.tab("کلاس‌ها")
+        
+        # بخش افزودن کلاس جدید
+        add_frame = self.create_input_section(tab, "افزودن کلاس جدید:")
+        
+        # انتخاب رشته
+        self.major_combo = ctk.CTkComboBox(
+            add_frame,
+            values=["انتخاب رشته"],
+            font=("B Nazanin", 13),
+            width=150,
+            height=35,
+            justify = "right",
+            state= "readonly"
+        )
+        self.major_combo.pack(side="right", padx=5)
+        self.major_combo.set("انتخاب رشته")
+        
+        # انتخاب پایه
+        self.grade_combo = ctk.CTkComboBox(
+            add_frame,
+            values=["انتخاب پایه"],
+            font=("B Nazanin", 13),
+            width=150,
+            height=35,
+            justify = "right",
+            state= "readonly"
+        )
+        self.grade_combo.pack(side="right", padx=5)
+        self.grade_combo.set("انتخاب پایه")
+        
+        # نام کلاس
+        self.class_entry = ctk.CTkEntry(
+            add_frame,
+            placeholder_text="شناسه کلاس (مثال: 101)",
+            font=("B Nazanin", 13),
+            width=150,
+            height=35,
+            justify = "right"
+        )
+        self.class_entry.pack(side="right", padx=5)
+        
+        ctk.CTkButton(
+            add_frame,
+            text="➕ افزودن",
+            # fg_color="#27AE60",
+            font=("B Nazanin", 13),
+            width=100,
+            height=35,
+            command=self.add_class
+        ).pack(side="right", padx=10)
+        
+        # لیست کلاس‌ها
+        self.classes_list = ctk.CTkScrollableFrame(tab, )
+        self.classes_list.pack(fill="both", expand=True, padx=10, pady=10)
 
-        self.delete_btn = ctk.CTkButton(self.button_frame, text="حذف رشته", command=self.delete_major)
-        self.delete_btn.grid(row=0, column=1, padx=5)
+    def create_courses_tab(self):
+        tab = self.tabview.tab("دروس")
 
-        self.save_btn = ctk.CTkButton(self.button_frame, text="ذخیره تغییرات", command=self.save_majors)
-        self.save_btn.grid(row=0, column=2, padx=5)
+        # بخش افزودن درس جدید
+        add_frame = self.create_input_section(tab, "افزودن درس جدید:")
 
+        # انتخاب رشته
+        self.course_major_combo = ctk.CTkComboBox(
+            add_frame,
+            values=["انتخاب رشته"],
+            font=("B Nazanin", 13),
+            width=150,
+            height=35,
+            justify = "right",
+            state= "readonly"
+        )
+        self.course_major_combo.pack(side="right", padx=5)
+        self.course_major_combo.set("انتخاب رشته")
+
+        # انتخاب پایه
+        self.course_grade_combo = ctk.CTkComboBox(
+            add_frame,
+            values=["انتخاب پایه"],
+            font=("B Nazanin", 13),
+            width=150,
+            height=35,
+            justify = "right",
+            state= "readonly"
+        )
+        self.course_grade_combo.pack(side="right", padx=5)
+        self.course_grade_combo.set("انتخاب پایه")
+
+        # نام درس
+        self.course_entry = ctk.CTkEntry(
+            add_frame,
+            placeholder_text="نام درس (مثال: ریاضی)",
+            font=("B Nazanin", 13),
+            width=150,
+            height=35,
+            justify = "right",
+        )
+        self.course_entry.pack(side="right", padx=5)
+
+        ctk.CTkButton(
+            add_frame,
+            text="➕ افزودن",
+            font=("B Nazanin", 13),
+            width=100,
+            height=35,
+            command=self.add_course
+        ).pack(side="right", padx=10)
+
+        # لیست دروس
+        self.courses_list = ctk.CTkScrollableFrame(tab, fg_color="white")
+        self.courses_list.pack(fill="both", expand=True, padx=10, pady=10)
+
+
+
+    def add_item_to_list(self, parent, text):
+        # افزودن آیتم به لیست‌ها
+        item_frame = ctk.CTkFrame(parent)
+        item_frame.pack(fill="x", pady=2, padx=5)
+        
+        ctk.CTkLabel(
+            item_frame,
+            text=text,
+            font=("B Nazanin", 13),
+        ).pack(side="right", padx=10)
+        
+        ctk.CTkButton(
+            item_frame,
+            text="✏️",
+            fg_color="transparent",
+            hover_color="#EBF5FB",
+            text_color="#3498DB",
+            width=30,
+            height=30,
+            font=("B Nazanin", 13)
+        ).pack(side="left")
+        
+        ctk.CTkButton(
+            item_frame,
+            text="🗑️",
+            fg_color="transparent",
+            hover_color="#FDEDEC",
+            text_color="#E74C3C",
+            width=30,
+            height=30,
+            font=("B Nazanin", 13)
+        ).pack(side="left")
+
+    # توابع موقت برای افزودن آیتم‌ها
     def add_major(self):
-        major = self.major_entry.get().strip()
-        if major != "":
-            current_text = self.major_listbox.get("1.0", "end-1c").split("\n")
-            if major not in current_text:
-                self.major_listbox.insert("end", major + "\n")
-                self.major_entry.delete(0, "end")
-            else:
-                mbox.showinfo("هشدار", "این رشته قبلا ثبت شده است.")
-        else:
-            mbox.showinfo("خطا", "نام رشته نمی‌تواند خالی باشد.")
+        if self.major_entry.get():
+            self.add_item_to_list(self.majors_list, self.major_entry.get())
+            self.major_entry.delete(0, "end")
 
-    def delete_major(self):
-        try:
-            selected_text = self.major_listbox.get("sel.first", "sel.last").strip()
-            if selected_text:
-                all_text = self.major_listbox.get("1.0", "end")
-                updated_text = all_text.replace(selected_text + "\n", "")
-                self.major_listbox.delete("1.0", "end")
-                self.major_listbox.insert("1.0", updated_text)
-        except:
-            mbox.showinfo("خطا", "لطفاً یک رشته را انتخاب کنید.")
+    def add_grade(self):
+        if self.grade_entry.get():
+            self.add_item_to_list(self.grades_list, self.grade_entry.get())
+            self.grade_entry.delete(0, "end")
 
-    def save_majors(self):
-        majors = self.major_listbox.get("1.0", "end-1c").split("\n")
-        majors = [m.strip() for m in majors if m.strip()]
-        try:
-            with open("majors.txt", "w", encoding="utf-8") as file:
-                for major in majors:
-                    file.write(major + "\n")
-            mbox.showinfo("ذخیره شد", "لیست رشته‌ها با موفقیت ذخیره شد.")
-        except Exception as e:
-            mbox.showerror("خطا", f"خطا در ذخیره سازی: {str(e)}")
+    def add_class(self):
+        class_info = f"{self.grade_combo.get()} - {self.major_combo.get()} - {self.class_entry.get()}"
+        self.add_item_to_list(self.classes_list, class_info)
+        self.class_entry.delete(0, "end")
+
+    def add_course(self):
+        course_info = (
+            f"{self.course_entry.get()} "
+            f"(پایه {self.course_grade_combo.get()} - "
+            f"رشته {self.course_major_combo.get()})"
+        )
+        self.add_item_to_list(self.courses_list, course_info)
+        self.course_entry.delete(0, "end")

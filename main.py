@@ -11,7 +11,7 @@ from pages.attendance_management import AttendanceManagementPage
 
 # تنظیمات اولیه
 ctk.set_appearance_mode("Light")
-ctk.set_default_color_theme("green")
+ctk.set_default_color_theme("blue")
 
 # ساخت پنجره اصلی
 app = ctk.CTk()
@@ -105,14 +105,14 @@ appearance_switch.pack(pady=(10, 5), padx=10)
 # ساخت دکمه‌های سایدبار
 buttons = [
     ("داشبورد", open_dashboard),
-    ("مدیریت رشته‌ها", open_major_management),
-    ("مدیریت کلاس‌ها", open_class_management),
+    ("حضور غیاب", Attendance_Management),
+    ("مدیریت رشته‌ها و کلاس ها", open_major_management),
+    # ("مدیریت کلاس‌ها", open_class_management),
     ("مدیریت دانش‌آموزان", open_student_management),
     ("مدیریت پرسنل", open_teacher_management),
-    ("مدیریت دروس", open_lesson_management),
-    ("مدیریت نمرات", open_score_registration),
-    ("گزارشات", open_report_generation),
-    ("حضور غیاب", Attendance_Management)
+    # ("مدیریت دروس", open_lesson_management),
+    # ("مدیریت نمرات", open_score_registration),
+    # ("گزارشات", open_report_generation),
 ]
 
 for text, command in buttons:
@@ -142,5 +142,6 @@ exit_btn = ctk.CTkButton(
 exit_btn.pack(pady=(20, 5), padx=10)
 
 # اجرای برنامه
+# open_major_management()
 open_dashboard()  # اولین صفحه داشبورد باز شود
 app.mainloop()
