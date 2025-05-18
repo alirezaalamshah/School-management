@@ -214,7 +214,7 @@ class MajorManagementPage(ctk.CTkFrame):
         ).pack(side="right", padx=10)
 
         # لیست دروس
-        self.courses_list = ctk.CTkScrollableFrame(tab, fg_color="white")
+        self.courses_list = ctk.CTkScrollableFrame(tab,)
         self.courses_list.pack(fill="both", expand=True, padx=10, pady=10)
 
 

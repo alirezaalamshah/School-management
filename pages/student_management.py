@@ -1,9 +1,6 @@
 import customtkinter as ctk
-from database.student_queries import create_student_table
-
 
 class StudentManagementPage(ctk.CTkFrame):
-    create_student_table() 
     def __init__(self, parent):
         super().__init__(parent)
         self.pack(fill="both", expand=True)
@@ -142,6 +139,20 @@ class StudentManagementPage(ctk.CTkFrame):
             corner_radius=6,
         )
         self.address_entry.grid(row=8, column=0, columnspan=3, padx=10, sticky="ew")
+
+        # اعمال راست‌چینی به Text داخلی
+        self.address_entry._textbox.tag_configure("right", justify="right")
+        self.address_entry._textbox.insert("1.0", "")  # خالی می‌گذاریم تا تگ اعمال شود
+        self.address_entry._textbox.tag_add("right", "1.0", "end")
+
+        def apply_rtl_tag(event=None):
+            # غیرفعال کردن رویداد برای جلوگیری از تکرار بی‌نهایت
+            self.address_entry._textbox.edit_modified(False)
+            self.address_entry._textbox.tag_add("right", "1.0", "end")
+        
+        # اتصال رویداد تغییر متن
+        self.address_entry._textbox.bind("<<Modified>>", apply_rtl_tag)
+
 
         btn_frame = ctk.CTkFrame(form_container, fg_color="transparent")
         btn_frame.grid(row=9, column=0, columnspan=3, pady=20)
